@@ -3,30 +3,38 @@ import Header from '../components/Header';
 import BillModal from '../components/BillModal';
 import AddBillModal from '../components/AddBillModal';
 
-// Sample bills data
-const initialBills = [
-  { id: 1, date: '2025-05-10', merchant: 'Office Supplies Co.', amount: 125.50, status: 'Pending', description: 'Office supplies including paper, pens, and printer ink.' },
-  { id: 2, date: '2025-05-08', merchant: 'Travel Agency', amount: 450.00, status: 'Approved', description: 'Train tickets for business trip to Paris.' },
-  { id: 3, date: '2025-05-05', merchant: 'Restaurant Le Gourmet', amount: 78.25, status: 'Rejected', description: 'Business lunch with potential clients.' },
-  { id: 4, date: '2025-05-01', merchant: 'Hotel Continental', amount: 320.00, status: 'Approved', description: 'Accommodation for conference in London.' },
-  { id: 5, date: '2025-04-28', merchant: 'Car Rental Inc.', amount: 215.75, status: 'Pending', description: 'Car rental for visiting remote clients.' },
-];
+
 
 export default function Dashboard({ onLogout }) {
-  const [bills, setBills] = useState(initialBills);
-  const [selectedBill, setSelectedBill] = useState(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [filterStatus, setFilterStatus] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [bills, setBills] = useState([]);
 
-  // Ensure proper modal cleanup when component unmounts
+  const [selectedBill, setSelectedBill] = useState(null)
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [filterStatus, setFilterStatus] = useState('All')
+  const [searchQuery, setSearchQuery] = useState('')
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTg3NTdiNWYwZmUwMGVhYjEyOTllZiIsInJvbGUiOiJ4eHh4IiwiZW1haWwiOiJzYWZkdTcwQGdtYWlsLmNvbSIsImlhdCI6MTc0NzY0MTYzNCwiZXhwIjoxNzQ3NzI4MDM0fQ.8_UO7Wug7cbC4WSI86MO_T9MtFhKiC0nFyJr7CaPgSY"
+
   useEffect(() => {
-    return () => {
-      // Ensure body scroll is enabled when component unmounts
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
+    (async () => {
+      try {
+        const response = await fetch('http://localhost:3000/bills',
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+        const data = await response.json()
+        setBills(data)
+      } catch (e) {
+        console.error('Error fetching bills:', e)
+      }
+    })()
+  }, [])
+
+
 
   const handleAddBill = (newBill) => {
     setBills([newBill, ...bills]);
@@ -61,7 +69,7 @@ export default function Dashboard({ onLogout }) {
     if (filterStatus !== 'All' && bill.status !== filterStatus) {
       return false;
     }
-    
+
     // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -71,7 +79,7 @@ export default function Dashboard({ onLogout }) {
         bill.amount.toString().includes(query)
       );
     }
-    
+
     return true;
   });
 
@@ -101,16 +109,16 @@ export default function Dashboard({ onLogout }) {
     setIsAddModalOpen(false);
   };
 
-  console.log('Current state:', { 
-    isDetailModalOpen, 
-    isAddModalOpen, 
-    selectedBill: selectedBill ? `Bill #${selectedBill.id}` : 'None' 
+  console.log('Current state:', {
+    isDetailModalOpen,
+    isAddModalOpen,
+    selectedBill: selectedBill ? `Bill #${selectedBill.id}` : 'None'
   });
 
   return (
     <div className="min-h-screen bg-white">
       <Header onLogout={onLogout} />
-      
+
       <main className="py-6">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Header Section */}
@@ -133,7 +141,7 @@ export default function Dashboard({ onLogout }) {
               </button>
             </div>
           </div>
-          
+
           {/* Filters */}
           <div className="mb-6 grid grid-cols-1 gap-y-4 md:grid-cols-3 md:gap-x-4">
             <div className="relative">
@@ -150,7 +158,7 @@ export default function Dashboard({ onLogout }) {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            
+
             <div className="md:col-span-2 md:flex md:items-center md:justify-end">
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-700">Status:</span>
@@ -167,7 +175,7 @@ export default function Dashboard({ onLogout }) {
               </div>
             </div>
           </div>
-          
+
           {/* Bills Table */}
           {filteredBills.length === 0 ? (
             <div className="mt-12 text-center">
@@ -204,7 +212,7 @@ export default function Dashboard({ onLogout }) {
             <div className="mt-8 flex flex-col">
               <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                  <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                  <div className="overflow-hidden shadow ring-1 ring-slate-200 ring-opacity-5 md:rounded-lg">
                     <table className="min-w-full divide-y divide-gray-300">
                       <thead className="bg-gray-50">
                         <tr>
@@ -215,7 +223,7 @@ export default function Dashboard({ onLogout }) {
                             Date
                           </th>
                           <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                            Merchant
+                            Type
                           </th>
                           <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                             Amount
@@ -230,51 +238,47 @@ export default function Dashboard({ onLogout }) {
                       </thead>
                       <tbody className="divide-y divide-gray-200 bg-white">
                         {filteredBills.map((bill) => (
-                          <tr 
-                            key={bill.id} 
+                          <tr
+                            key={bill._id}
                             className="hover:bg-gray-50 cursor-pointer"
+                            onClick={() => handleRowClick(bill)}
                           >
-                            <td 
+                            <td
                               className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                              onClick={() => handleRowClick(bill)}
                             >
-                              #{bill.id}
+                              {bill._id}
                             </td>
-                            <td 
+                            <td
                               className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                              onClick={() => handleRowClick(bill)}
                             >
                               {formatDate(bill.date)}
                             </td>
-                            <td 
+                            <td
                               className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                              onClick={() => handleRowClick(bill)}
                             >
-                              {bill.merchant}
+                              {bill.type}
                             </td>
-                            <td 
+                            <td
                               className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 font-medium"
-                              onClick={() => handleRowClick(bill)}
                             >
                               ${bill.amount.toFixed(2)}
                             </td>
-                            <td 
+                            <td
                               className="whitespace-nowrap px-3 py-4 text-sm"
-                              onClick={() => handleRowClick(bill)}
                             >
                               <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusClasses(bill.status)}`}>
                                 {bill.status}
                               </span>
                             </td>
                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                              <button 
+                              <button
                                 className="text-blue-600 hover:text-blue-900"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleViewBill(bill);
                                 }}
                               >
-                                View<span className="sr-only">, bill #{bill.id}</span>
+                                View<span className="sr-only">, bill #{bill._id}</span>
                               </button>
                             </td>
                           </tr>
@@ -284,7 +288,7 @@ export default function Dashboard({ onLogout }) {
                   </div>
                 </div>
               </div>
-              
+
               {/* Pagination */}
               <div className="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
                 <div className="flex flex-1 justify-between sm:hidden">
@@ -327,14 +331,14 @@ export default function Dashboard({ onLogout }) {
           )}
         </div>
       </main>
-      
+
       {/* Bill Detail Modal */}
       <BillModal
         bill={selectedBill}
         isOpen={isDetailModalOpen}
         onClose={closeDetailModal}
       />
-      
+
       {/* Add Bill Modal */}
       <AddBillModal
         isOpen={isAddModalOpen}

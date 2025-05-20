@@ -16,8 +16,7 @@ export default function Login({ onLogin }) {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      // In a real app, you would make an API call here
-      // const response = await fetch('/api/login', { ... })
+    
       
       onLogin();
     } catch (err) {

@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 
 export default function AddBillModal({ isOpen, onClose, onSave }) {
-  const [formData, setFormData] = useState({
+  const [data, setData] = useState({
     date: new Date().toISOString().split('T')[0],
-    merchant: '',
+    type: '',
     amount: '',
     status: 'Pending',
     description: '',
-    receipt: null
+    proof: null
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const modalRef = useRef(null);
@@ -17,13 +17,13 @@ export default function AddBillModal({ isOpen, onClose, onSave }) {
   useEffect(() => {
     if (!isOpen) {
       // Reset form when modal closes
-      setFormData({
+      setData({
         date: new Date().toISOString().split('T')[0],
-        merchant: '',
+        type: '',
         amount: '',
         status: 'Pending',
         description: '',
-        receipt: null
+        proof: null
       });
       setIsSubmitting(false);
     }
@@ -57,16 +57,17 @@ export default function AddBillModal({ isOpen, onClose, onSave }) {
   }, [isOpen, onClose]);
 
   const handleChange = (e) => {
+    console.log(e.target.name, e.target.value)
     const { name, value, type } = e.target;
     
     if (type === 'file') {
-      setFormData({
-        ...formData,
-        receipt: e.target.files[0] || null
+      setData({
+        ...data,
+        proof: e.target.files[0] || null
       });
     } else {
-      setFormData({
-        ...formData,
+      setData({
+        ...data,
         [name]: value
       });
     }
@@ -78,15 +79,19 @@ export default function AddBillModal({ isOpen, onClose, onSave }) {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Convert amount to number
-      const billData = {
-        ...formData,
-        amount: parseFloat(formData.amount),
-        id: Math.floor(Math.random() * 10000) // Generate a random ID (would be handled by backend in real app)
-      };
+    
+      const formData = new FormData()
+      formData.append('proof', data.proof)
+      formData.append('metadata', JSON.stringify({amount: data.amount, type: data.type, date: data.date, description: data.description, status: data.status}))
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTg3NTdiNWYwZmUwMGVhYjEyOTllZiIsInJvbGUiOiJ4eHh4IiwiZW1haWwiOiJzYWZkdTcwQGdtYWlsLmNvbSIsImlhdCI6MTc0NzY0MTYzNCwiZXhwIjoxNzQ3NzI4MDM0fQ.8_UO7Wug7cbC4WSI86MO_T9MtFhKiC0nFyJr7CaPgSY"
+      const response = await fetch('http://localhost:3000/bills', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      })
+      const billData = await response.json()
       
       onSave(billData);
       onClose();
@@ -107,9 +112,9 @@ export default function AddBillModal({ isOpen, onClose, onSave }) {
     e.stopPropagation();
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFormData({
-        ...formData,
-        receipt: e.dataTransfer.files[0]
+      setData({
+        ...data,
+        proof: e.dataTransfer.files[0]
       });
     }
   };
@@ -151,7 +156,7 @@ export default function AddBillModal({ isOpen, onClose, onSave }) {
                           type="date"
                           name="date"
                           id="date"
-                          value={formData.date}
+                          value={data.date}
                           onChange={handleChange}
                           required
                           className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
@@ -169,7 +174,7 @@ export default function AddBillModal({ isOpen, onClose, onSave }) {
                           min="0.01"
                           step="0.01"
                           placeholder="0.00"
-                          value={formData.amount}
+                          value={data.amount}
                           onChange={handleChange}
                           required
                           className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
@@ -183,10 +188,10 @@ export default function AddBillModal({ isOpen, onClose, onSave }) {
                       </label>
                       <input
                         type="text"
-                        name="merchant"
-                        id="merchant"
-                        placeholder="Enter merchant name"
-                        value={formData.merchant}
+                        name="type"
+                        id="type"
+                        placeholder="Enter type"
+                        value={data.type}
                         onChange={handleChange}
                         required
                         className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
@@ -202,28 +207,13 @@ export default function AddBillModal({ isOpen, onClose, onSave }) {
                         name="description"
                         rows={3}
                         placeholder="Enter bill description"
-                        value={formData.description}
+                        value={data.description}
                         onChange={handleChange}
                         className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                       />
                     </div>
                     
-                    <div>
-                      <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                        Status
-                      </label>
-                      <select
-                        id="status"
-                        name="status"
-                        value={formData.status}
-                        onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                      >
-                        <option value="Pending">Pending</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Rejected">Rejected</option>
-                      </select>
-                    </div>
+                   
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
@@ -269,9 +259,9 @@ export default function AddBillModal({ isOpen, onClose, onSave }) {
                           </div>
                           <p className="text-xs text-gray-500">PNG, JPG, PDF up to 10MB</p>
                           
-                          {formData.receipt && (
+                          {data.receipt && (
                             <p className="text-sm text-blue-600 mt-2">
-                              {formData.receipt.name}
+                              {data.receipt.name}
                             </p>
                           )}
                         </div>

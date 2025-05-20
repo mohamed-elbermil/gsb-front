@@ -80,7 +80,7 @@ export default function BillModal({ bill, isOpen, onClose }) {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm font-medium text-gray-500">Bill ID</p>
-                        <p className="mt-1 text-sm text-gray-900">#{bill.id}</p>
+                        <p className="mt-1 text-sm text-gray-900">{bill._id}</p>
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-500">Date</p>
@@ -89,8 +89,8 @@ export default function BillModal({ bill, isOpen, onClose }) {
                     </div>
                     
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Merchant</p>
-                      <p className="mt-1 text-sm text-gray-900">{bill.merchant}</p>
+                      <p className="text-sm font-medium text-gray-500">Type</p>
+                      <p className="mt-1 text-sm text-gray-900">{bill.type}</p>
                     </div>
                     
                     <div>
@@ -105,16 +105,11 @@ export default function BillModal({ bill, isOpen, onClose }) {
                       </div>
                     )}
                     
-                    {bill.receipt && (
+                    {bill.proof && (
                       <div>
                         <p className="text-sm font-medium text-gray-500">Receipt</p>
                         <div className="mt-1 flex items-center">
-                          <svg className="h-5 w-5 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
-                          </svg>
-                          <span className="text-sm text-blue-600 hover:text-blue-500">
-                            View Receipt
-                          </span>
+                          <img src={bill.proof} alt="Receipt" className="w-24 h-24 object-cover rounded-md" />
                         </div>
                       </div>
                     )}
@@ -135,12 +130,7 @@ export default function BillModal({ bill, isOpen, onClose }) {
             >
               Close
             </button>
-            <button
-              type="button"
-              className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
-            >
-              Download PDF
-            </button>
+           
           </div>
         </div>
       </div>
