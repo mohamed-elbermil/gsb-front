@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 
-export default function AddBillModal({ isOpen, onClose, onSave }) {
+export default function AddBillModal({ isOpen, onClose, onSave }) { /* isOpen: booléen – contrôle l'affichage de la modale / onClose: fonction – appelée pour fermer la modale / 
+  onSave: fonction – appelée après l'enregistrement d'une facture */
   const [data, setData] = useState({
     date: new Date().toISOString().split('T')[0],
     type: '',
