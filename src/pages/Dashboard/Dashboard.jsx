@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import BillModal from '../components/BillModal';
-import AddBillModal from '../components/AddBillModal';
+import Header from '../../components/Header/Header';
+import BillModal from '../../components/BillModal';
+import AddBillModal from '../../components/AddBillModal';
+import styles from './Dashboard.module.css'
 
 
 
@@ -137,7 +138,7 @@ export default function Dashboard({ onLogout }) {
                 <svg className="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                 </svg>
-                Add Bill
+                Faire une demande
               </button>
             </div>
           </div>
@@ -195,18 +196,35 @@ export default function Dashboard({ onLogout }) {
               </p>
               {!searchQuery && filterStatus === 'All' && (
                 <div className="mt-6">
-                  <button
-                    type="button"
-                    onClick={openAddBillModal}
-                    className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
-                  >
-                    <svg className="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
-                    </svg>
-                    Add Bill
-                  </button>
                 </div>
               )}
+              <table className={styles.table}>
+                <tr>
+                  <th>Type</th>
+                  <th>Motif</th>
+                  <th>Statut</th>
+                  <th>Montant</th>
+                </tr>
+                <tr>
+                  <td>les</td>
+                  <td>les</td>
+                  <td>les</td>
+                  <td>les</td>
+                </tr>
+                <tr>
+                  <td>les</td>
+                  <td>les</td>
+                  <td>les</td>
+                  <td>les</td>
+                </tr>
+                <tr>
+                  <td>les</td>
+                  <td>les</td>
+                  <td>les</td>
+                  <td>les</td>
+                </tr>
+              </table>
+
             </div>
           ) : (
             <div className="mt-8 flex flex-col">

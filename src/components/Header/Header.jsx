@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import Avatar from '../../assets/images/avatar.png'
+import styles from './Header.module.css'
 
 export default function Header({ onLogout }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,6 +21,7 @@ export default function Header({ onLogout }) {
           
           <div className="hidden md:block">
             <div className="flex items-center space-x-4">
+              <img src={Avatar} alt="" className={styles.avatar}/>
               <span className="text-gray-700">John Doe</span>
               <div className="h-6 w-px bg-gray-300"></div>
               <button
